@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
@@ -57,10 +59,47 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
 
-</script>
+    function playAudio(event) {
+      //when theres an event, get the DOM elements associated with the keyboard trigger
+      const audio = document.querySelector(`audio[data-key="${event.keyCode}"]`);
+      const button = document.querySelector(`div[data-key="${event.keyCode}"]`);
+
+
+      if (!audio) return; //if the trigger element is null, end function
+
+      audio.play(); //else, play the audio file of the trigger
+      audio.currentTime = 0;
+      button.classList.add('playing'); //and animate the screen button associated with the trigger event
+    };
+
+
+    function removeTransform(event) {
+      if (event.propertyName !== 'transform') {
+        return;
+      };
+      this.classList.remove('playing');
+
+      //pressing and holding down a key makes the KeyboardEvent.repeat kick in
+      //This stopPlaying function fails to remove the playing class because the
+      //keydown event just goes on repeat.
+      //adding a setTimeout function serves as a failsafe for that edgecase
+      setTimeout(() => {
+        this.classList.remove('playing');
+      }, 1000);
+    }
+
+    document.addEventListener('keydown', playAudio); //listen for keyboard events on document
+
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => key.addEventListener('transitionend', removeTransform));
+
+
+
+  </script>
 
 
 </body>
+
 </html>
